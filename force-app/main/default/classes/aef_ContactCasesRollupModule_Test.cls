@@ -237,4 +237,168 @@ private class aef_ContactCasesRollupModule_Test {
             .registerDirty((Contact) contactUpdateCapture.capture());
 
     }
+
+    /**
+     * @description
+     *  Test scenario of recalculating new totals if the case gets deleted
+     */
+    @isTest
+    static void shouldReduceTotalsOnCaseDelete() {
+
+        // GIVEN
+
+        // create contacts
+        List<Contact> contacts = aef_ApplicationTestDataFactory.getContacts(1, null, true);
+        contacts[0].Total_Open_Cases__c = 1;
+        contacts[0].Total_Closed_Cases__c = 1;
+
+        // create cases
+        List<Case> cases = aef_ApplicationTestDataFactory.getCases(2, null, false);
+        cases[0].ContactId = contacts[0].Id;
+        cases[0].Status = 'New';
+
+        cases[1].ContactId = contacts[0].Id;
+        cases[1].Status = 'Closed';
+
+        // expected outcome
+        List<Contact> contactsWithTotal = new List<Contact> { contacts[0].clone(true) };
+        contactsWithTotal[0].Total_Open_Cases__c = 0;
+        contactsWithTotal[0].Total_Closed_Cases__c = 0;
+
+        // stubbing - start
+        aef_ApplicationUnitOfWork mockUow = (aef_ApplicationUnitOfWork) aef_MockUtility.mockUtility(aef_ApplicationUnitOfWork.class);
+        aef_ContactsSelector mockContactsSelector = (aef_ContactsSelector) aef_MockUtility.mockSelector(aef_ContactsSelector.class);
+
+        aef_MockUtility.Mocks.startStubbing();
+
+        // catch contact update
+        aef_MockUtility.Mocks
+            .when(mockUOW.registerDirty((Contact) fflib_Match.anySObject()))
+            .thenAnswer(new aef_MockUtility.AnswerGenericRegisterUnitOfWorkDML());
+
+        // catch contact query
+        aef_MockUtility.Mocks
+            .when(mockContactsSelector.selectById((Set<Id>) fflib_Match.anyObject()))
+            .thenReturn(contacts);
+
+        aef_MockUtility.Mocks.stopStubbing();
+        // stubbing - end
+
+        Test.startTest();
+
+        // WHEN
+        aef_ContactCasesRollupModule conModule = aef_ContactCasesRollupModule.newInstance();
+        conModule.onAfterDelete(cases, mockUOW);
+
+        Test.stopTest();
+
+        // THEN
+
+        // capture arguments
+        fflib_ArgumentCaptor contactUpdateCapture = fflib_ArgumentCaptor.forClass(List<Contact>.class);
+
+        // verify the number of times the update ran
+        ((aef_ApplicationUnitOfWork) aef_MockUtility.Mocks.verify(mockUOW, aef_MockUtility.Mocks.times(1)))
+            .registerDirty((Contact) contactUpdateCapture.capture());
+
+        // verify number of contacts that were updated
+		List<Object> contactUpdateList = (List<Object>) contactUpdateCapture.getAllValues();
+        Contact contactWithTotal = contactsWithTotal[0];
+        Contact contactUpdate = (Contact) contactUpdateList[0];
+		System.assertEquals(1, contactUpdateList.size(), 'Unexpected number of Contacts updated');
+
+        // verify that Contact total cases were updated correctly
+        Assert.areEqual(contactWithTotal.Id, contactUpdate.Id, 'Unexpected Contact record captured');
+        Assert.areEqual(contactWithTotal.Total_Open_Cases__c, contactUpdate.Total_Open_Cases__c, 'Unexpected number of calculated Open Cases');
+        Assert.areEqual(contactWithTotal.Total_Closed_Cases__c, contactUpdate.Total_Closed_Cases__c, 'Unexpected number of calculated Closed Cases');
+    }
+
+    /**
+     * @description
+     *  Test if the expected Contact defaults are set
+     */
+    @isTest
+    static void shouldDefaultExpectedTotals() {
+
+        // GIVEN
+
+        // create a contact
+        List<Contact> contacts = aef_ApplicationTestDataFactory.getContacts(1, null, true);
+
+        Contact output;
+
+        Test.startTest();
+
+        // WHEN
+        output = aef_ContactCasesRollupModule.newInstance().initContactWithBlankTotal(contacts[0].Id);
+
+        Test.stopTest();
+
+        // THEN
+        Assert.areEqual(contacts[0].Id, output.Id, 'Unexpected Contact Id');
+        Assert.areEqual(0, output.Total_Open_Cases__c, 'Unexpected result of Total Closed Cases');
+        Assert.areEqual(0, output.Total_Closed_Cases__c, 'Unexpected result of Total Closed Cases');
+    }
+
+    /**
+     * @description
+     *  Test logic of total cases recalculation
+     */
+    @isTest
+    static void shouldUpdateTotalCases() {
+        // GIVEN
+
+        // create contact
+        List<Contact> contacts = aef_ApplicationTestDataFactory.getContacts(2, null, false);
+        Contact current = contacts[0];
+        Contact changes = contacts[1];
+
+        current.Total_Open_Cases__c = 5;
+        current.Total_Closed_Cases__c = 2;
+
+        changes.Total_Open_Cases__c = -3;
+        changes.Total_Closed_Cases__c = 4;
+
+        Contact output;
+
+        Test.startTest();
+
+        // WHEN
+        output = aef_ContactCasesRollupModule.newInstance().updateTotalCases(current, changes);
+
+        Test.stopTest();
+
+        // THEN
+        Assert.areEqual(2, output.Total_Open_Cases__c, 'Unexpected result of Total Open Cases');
+        Assert.areEqual(6, output.Total_Closed_Cases__c, 'Unexpected result of Total Closed Cases');
+    }
+    /**
+     * @description
+     *  If Contact totals ended up as negative values (somehow) in the event of
+     *  calculating bad data, make sure to default them to zero to prevent further
+     *  miscalculations
+     */
+    @isTest
+    static void shouldDefaultNegativesToZero() {
+        
+        // GIVEN
+
+        // create contact
+        List<Contact> contacts = aef_ApplicationTestDataFactory.getContacts(1, null, false);
+        contacts[0].Total_Open_Cases__c = -5;
+        contacts[0].Total_Closed_Cases__c = -3;
+
+        Contact output;
+
+        Test.startTest();
+
+        // WHEN
+        output = aef_ContactCasesRollupModule.newInstance().flushNegatives(contacts[0]);
+
+        Test.stopTest();
+
+        // THEN
+        Assert.areEqual(0, output.Total_Open_Cases__c, 'Unable to default negative values to 0');
+        Assert.areEqual(0, output.Total_Closed_Cases__c, 'Unable to default negative values to 0');
+    }
 }
