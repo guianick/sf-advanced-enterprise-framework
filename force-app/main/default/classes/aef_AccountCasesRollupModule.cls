@@ -5,7 +5,7 @@
  * @last modified on  : 24-03-2023
  * @last modified by  : Nick Guia
 **/
-public with sharing class aef_AccountCasesRollupModule extends aef_ApplicationDomain.Module {
+public inherited sharing class aef_AccountCasesRollupModule extends aef_ApplicationDomain.Module {
 
     /** 
      * this can further be improved by centralising the definition of Open and Closed Status
