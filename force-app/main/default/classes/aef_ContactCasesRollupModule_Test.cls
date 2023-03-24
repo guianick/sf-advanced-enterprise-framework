@@ -166,10 +166,10 @@ private class aef_ContactCasesRollupModule_Test {
             .registerDirty((Contact) contactUpdateCapture.capture());
 
         // verify number of contacts that were updated
-		List<Object> contactUpdateList = (List<Object>) contactUpdateCapture.getAllValues();
+        List<Object> contactUpdateList = (List<Object>) contactUpdateCapture.getAllValues();
         Contact contactWithNewTotal = contactsWithNewTotal[0];
         Contact contactUpdate = (Contact) contactUpdateList[0];
-		System.assertEquals(1, contactUpdateList.size(), 'Unexpected number of Contacts updated');
+        Assert.areEqual(1, contactUpdateList.size(), 'Unexpected number of Contacts updated');
 
         // verify that Contact total cases were updated correctly
         Assert.areEqual(contactWithNewTotal.Id, contactUpdate.Id, 'Unexpected Contact record captured');
@@ -302,10 +302,10 @@ private class aef_ContactCasesRollupModule_Test {
             .registerDirty((Contact) contactUpdateCapture.capture());
 
         // verify number of contacts that were updated
-		List<Object> contactUpdateList = (List<Object>) contactUpdateCapture.getAllValues();
+        List<Object> contactUpdateList = (List<Object>) contactUpdateCapture.getAllValues();
         Contact contactWithTotal = contactsWithTotal[0];
         Contact contactUpdate = (Contact) contactUpdateList[0];
-		System.assertEquals(1, contactUpdateList.size(), 'Unexpected number of Contacts updated');
+        Assert.areEqual(1, contactUpdateList.size(), 'Unexpected number of Contacts updated');
 
         // verify that Contact total cases were updated correctly
         Assert.areEqual(contactWithTotal.Id, contactUpdate.Id, 'Unexpected Contact record captured');

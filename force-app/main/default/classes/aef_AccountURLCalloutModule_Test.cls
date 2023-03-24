@@ -30,13 +30,14 @@ private class aef_AccountURLCalloutModule_Test {
         List<Account> accounts = aef_ApplicationTestDataFactory.getAccounts(2, true);
 
         // mock
-		aef_ApplicationUnitOfWork mockUOW = (aef_ApplicationUnitOfWork) aef_MockUtility.mockUtility(aef_ApplicationUnitOfWork.class);
+        aef_ApplicationUnitOfWork mockUOW = (aef_ApplicationUnitOfWork) aef_MockUtility.mockUtility(aef_ApplicationUnitOfWork.class);
 
         // start stubbing
         aef_MockUtility.Mocks.startStubbing();
 
         // catch account update
-		aef_MockUtility.Mocks.when(mockUOW.registerDirty((Account) fflib_Match.anySObject()))
+        aef_MockUtility.Mocks
+            .when(mockUOW.registerDirty((Account) fflib_Match.anySObject()))
             .thenAnswer(new aef_MockUtility.AnswerGenericRegisterUnitOfWorkDML());
 
         // end stubbing
@@ -51,13 +52,12 @@ private class aef_AccountURLCalloutModule_Test {
         Test.stopTest();
 
         // verify that worker was dispatched
-		fflib_ArgumentCaptor stagedWorkerCapture = fflib_ArgumentCaptor.forClass(aef_ApplicationUnitOfWork.AsyncStagingWorker.class);
+        fflib_ArgumentCaptor stagedWorkerCapture = fflib_ArgumentCaptor.forClass(aef_ApplicationUnitOfWork.AsyncStagingWorker.class);
 		((aef_ApplicationUnitOfWork) aef_MockUtility.Mocks.verify(mockUOW, aef_MockUtility.Mocks.times(2)))
-            .registerAsyncWork((aef_ApplicationUnitOfWork.AsyncStagingWorker) stagedWorkerCapture.capture());
-
-		aef_ApplicationUnitOfWork.AsyncStagingWorker stagedWorker = (aef_ApplicationUnitOfWork.AsyncStagingWorker) stagedWorkerCapture.getValue();
-
-		Assert.areEqual(
+                                                        .registerAsyncWork((aef_ApplicationUnitOfWork.AsyncStagingWorker) stagedWorkerCapture.capture());
+        
+        aef_ApplicationUnitOfWork.AsyncStagingWorker stagedWorker = (aef_ApplicationUnitOfWork.AsyncStagingWorker) stagedWorkerCapture.getValue();
+        Assert.areEqual(
             aef_AccountURLCalloutModule.AsyncStoreSecretKey.class, 
             stagedWorker.classType, 
             'AsyncStoreSecretKey was not enqueued');
@@ -89,13 +89,14 @@ private class aef_AccountURLCalloutModule_Test {
         expectedAccount.Secret_Key__c = expectedResponse.secretKey;
 
         // mock
-		aef_ApplicationUnitOfWork mockUOW = (aef_ApplicationUnitOfWork) aef_MockUtility.mockUtility(aef_ApplicationUnitOfWork.class);
+        aef_ApplicationUnitOfWork mockUOW = (aef_ApplicationUnitOfWork) aef_MockUtility.mockUtility(aef_ApplicationUnitOfWork.class);
 
         // start stubbing
         aef_MockUtility.Mocks.startStubbing();
 
         // catch account update
-		aef_MockUtility.Mocks.when(mockUOW.registerDirty((Account) fflib_Match.anySObject()))
+        aef_MockUtility.Mocks
+            .when(mockUOW.registerDirty((Account) fflib_Match.anySObject()))
             .thenAnswer(new aef_MockUtility.AnswerGenericRegisterUnitOfWorkDML());
 
         // end stubbing
@@ -115,17 +116,17 @@ private class aef_AccountURLCalloutModule_Test {
         Assert.areEqual(Account.SObjectType, asyncWorker.getSObjectTypeGroup(), 'Unexpected SObjectType');
         Assert.areEqual(aef_AccountURLCalloutModule.AsyncStoreSecretKey.class, asyncWorker.getClassType(), 'Unexpected class type');
 
-		// verify the Case will be updated correctly and capture the arguments for review
-		fflib_ArgumentCaptor accountCasesCapture = fflib_ArgumentCaptor.forClass(List<Account>.class);
-		((aef_ApplicationUnitOfWork) aef_MockUtility.Mocks.verify(mockUOW, aef_MockUtility.Mocks.times(1)))
-            .registerDirty((Account) accountCasesCapture.capture());
+        // verify the aCCOUNT will be updated correctly and capture the arguments for review
+        fflib_ArgumentCaptor accountCasesCapture = fflib_ArgumentCaptor.forClass(List<Account>.class);
+        ((aef_ApplicationUnitOfWork) aef_MockUtility.Mocks.verify(mockUOW, aef_MockUtility.Mocks.times(1)))
+                                                        .registerDirty((Account) accountCasesCapture.capture());
 
-		// verify that only one account was captured for update
-		List<Object> accountUpdateList = (List<Object>) accountCasesCapture.getAllValues();
+        // verify that only one account was captured for update
+        List<Object> accountUpdateList = (List<Object>) accountCasesCapture.getAllValues();
         Assert.areEqual(1, accountUpdateList.size(), 'Unexpected number of accounts attempted to update');
-		// verify that the accounts being updated are the same
+        // verify that the accounts being updated are the same
         Assert.areEqual(accounts[0].Id, ((Account) accountUpdateList[0]).Id, 'Unexpected Account record being updated');
-		//verify that the Account secret key was updated
-		Assert.areEqual(expectedAccount.Secret_Key__c, ((Account) accountUpdateList[0]).Secret_Key__c, 'Unexpected Secret Key value');
+        //verify that the Account secret key was updated
+        Assert.areEqual(expectedAccount.Secret_Key__c, ((Account) accountUpdateList[0]).Secret_Key__c, 'Unexpected Secret Key value');
     }
 }

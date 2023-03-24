@@ -8,19 +8,19 @@
  *
  * @author            : Nick Guia
  * @group             : Domains
- * @last modified on  : 22-03-2023
+ * @last modified on  : 24-03-2023
  * @last modified by  : Nick Guia
 **/
 public inherited sharing class aef_AccountCasesDomain extends aef_ApplicationDomain {
 
     // initialise instance
     public static aef_AccountCasesDomain newInstance(List<SObject> sObjectList) {
-		return (aef_AccountCasesDomain) aef_ApplicationDomain.newInstance(aef_AccountCasesDomain.class, sObjectList);
-	}
+        return (aef_AccountCasesDomain) aef_ApplicationDomain.newInstance(aef_AccountCasesDomain.class, sObjectList);
+    }
 
     public override void registerModules() {
         registerModule(aef_AccountCasesRollupModule.class);
-	}
+    }
 
     /**
      * Domain-specific Filter criteria:

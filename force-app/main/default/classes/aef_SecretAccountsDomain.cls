@@ -9,12 +9,12 @@ public inherited sharing class aef_SecretAccountsDomain extends aef_ApplicationD
 
     // initialise instance
     public static aef_SecretAccountsDomain newInstance(List<SObject> sObjectList) {
-		return (aef_SecretAccountsDomain) aef_ApplicationDomain.newInstance(aef_SecretAccountsDomain.class, sObjectList);
-	}
+        return (aef_SecretAccountsDomain) aef_ApplicationDomain.newInstance(aef_SecretAccountsDomain.class, sObjectList);
+    }
 
     public override void registerModules() {
         registerModule(aef_AccountURLCalloutModule.class);
-	}
+    }
 
     /**
      * Filter criteria:

@@ -17,21 +17,22 @@ public inherited sharing class aef_ContactCasesRollupModule extends aef_Applicat
         'Working', 
         'Escalated' 
     };
+
     private static final Set<String> CASE_STATUS_CLOSED = new Set<String> { 
         'Closed'
     };
 
     public aef_ContactCasesRollupModule() {
-		getTriggerEvents().enableAfterInsert().enableAfterUpdate().enableAfterDelete();
-	}
+        getTriggerEvents().enableAfterInsert().enableAfterUpdate().enableAfterDelete();
+    }
 
     public static aef_ContactCasesRollupModule newInstance() {
-		return (aef_ContactCasesRollupModule) aef_Application.Utilities.newInstance(aef_ContactCasesRollupModule.class);
-	}
+        return (aef_ContactCasesRollupModule) aef_Application.Utilities.newInstance(aef_ContactCasesRollupModule.class);
+    }
     
 	public override void onAfterInsert(List<SObject> records, aef_ApplicationUnitOfWork uow) {
-		rollupCaseSummary(records, false, uow);
-	}
+        rollupCaseSummary(records, false, uow);
+    }
 
     public override void onAfterUpdate(List<SObject> records, Map<Id, SObject> existingRecords, aef_ApplicationUnitOfWork uow) {
         rollupCaseSummary((List<Case>) records, (Map<Id, Case>) existingRecords, uow);

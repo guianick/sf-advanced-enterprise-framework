@@ -7,9 +7,8 @@
 **/
 trigger aef_AccountTrigger on Account (after insert) {
 
-    // global mute
+	// global mute
 	if(!aef_SystemSettings__c.getInstance().DisableTriggers__c) {
 		(new aef_AccountTriggerHandler()).dispatch();
 	}
-
 }

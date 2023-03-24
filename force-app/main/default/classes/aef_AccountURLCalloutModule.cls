@@ -7,16 +7,16 @@
 public inherited sharing class aef_AccountURLCalloutModule extends aef_ApplicationDomain.Module {
     
     public aef_AccountURLCalloutModule() {
-		getTriggerEvents().enableAfterInsert();
-	}
+        getTriggerEvents().enableAfterInsert();
+    }
 
     public static aef_AccountURLCalloutModule newInstance() {
-		return (aef_AccountURLCalloutModule) aef_Application.Utilities.newInstance(aef_AccountURLCalloutModule.class);
-	}
+        return (aef_AccountURLCalloutModule) aef_Application.Utilities.newInstance(aef_AccountURLCalloutModule.class);
+    }
 
     public override void onAfterInsert(List<SObject> records, aef_ApplicationUnitOfWork uow) {
-		accountRegistrationAPICallout((List<Account>) records, uow);
-	}
+        accountRegistrationAPICallout((List<Account>) records, uow);
+    }
 
     @TestVisible
     private void accountRegistrationAPICallout(List<Account> records, aef_ApplicationUnitOfWork uow) {
@@ -54,9 +54,9 @@ public inherited sharing class aef_AccountURLCalloutModule extends aef_Applicati
 		}
 
         // deserialise params to ensure integrity of payload
-		public override void deserialiseParams(String serialisedParams) {
-			this.params = (AsyncStoreSecretKeyParams) JSON.deserialize(serialisedParams, AsyncStoreSecretKeyParams.class);
-		}
+        public override void deserialiseParams(String serialisedParams) {
+            this.params = (AsyncStoreSecretKeyParams) JSON.deserialize(serialisedParams, AsyncStoreSecretKeyParams.class);
+        }
 
         public override void execute(aef_ApplicationUnitOfWork  uow) {
             // build request 

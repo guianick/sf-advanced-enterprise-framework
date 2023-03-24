@@ -12,8 +12,8 @@ private class aef_CaseTriggerHandler_Test {
      * @description
      *  No logic to test since this is a template
      */
-	@IsTest
-	static void shouldTestHandler() {
+    @IsTest
+    static void shouldTestHandler() {
 
         //GIVEN
         aef_CaseTriggerHandler handler;
@@ -24,12 +24,12 @@ private class aef_CaseTriggerHandler_Test {
         // WHEN
         handler = new aef_CaseTriggerHandler();
         handler.newUnitOfWork();
-		handler.registerDomains();
+        handler.registerDomains();
         handlerSObject = handler.getSObjectType();
 
         Test.stopTest();
 
         // THEN
         Assert.areEqual(Case.SObjectType, handlerSObject, 'Unexpected SObjectType on CaseTriggerHandler');
-	}
+    }
 }
