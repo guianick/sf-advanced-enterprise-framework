@@ -1,13 +1,13 @@
 /**
- * @description       : Test class for aef_CaseTriggerHandler
+ * @description       : Test class for aef_AccountTriggerHandler
  * @group             : Test Classes
  * @author            : Nick Guia
  * @last modified on  : 24-03-2023
  * @last modified by  : Nick Guia
 **/
 @IsTest(isParallel=true)
-private class aef_CaseTriggerHandler_Test {
-    
+private class aef_AccountTriggerHandler_Test {
+
     /**
      * @description
      *  No logic to test since this is a template
@@ -16,13 +16,13 @@ private class aef_CaseTriggerHandler_Test {
 	static void shouldTestHandler() {
 
         //GIVEN
-        aef_CaseTriggerHandler handler;
+        aef_AccountTriggerHandler handler;
         SObjectType handlerSObject;
 
         Test.startTest();
 
         // WHEN
-        handler = new aef_CaseTriggerHandler();
+        handler = new aef_AccountTriggerHandler();
         handler.newUnitOfWork();
 		handler.registerDomains();
         handlerSObject = handler.getSObjectType();
@@ -30,6 +30,6 @@ private class aef_CaseTriggerHandler_Test {
         Test.stopTest();
 
         // THEN
-        Assert.areEqual(Case.SObjectType, handlerSObject, 'Unexpected SObjectType on CaseTriggerHandler');
+        Assert.areEqual(Account.SObjectType, handlerSObject, 'Unexpected SObjectType on CaseTriggerHandler');
 	}
 }
