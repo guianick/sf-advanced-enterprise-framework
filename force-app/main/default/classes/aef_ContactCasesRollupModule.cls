@@ -108,8 +108,8 @@ public inherited sharing class aef_ContactCasesRollupModule extends aef_Applicat
                                                 .selectById(contactsToUpdate.keySet());
             for(Contact iCon : existingContacts) {
                 Contact contextContact = contactsToUpdate.get(iCon.Id);
-                iCon.Total_Open_Cases__c += contextContact.Total_Open_Cases__c;
-                iCon.Total_Closed_Cases__c += contextContact.Total_Closed_Cases__c;
+                iCon.Total_Open_Cases__c = (iCon.Total_Open_Cases__c != null) ? iCon.Total_Open_Cases__c + contextContact.Total_Open_Cases__c : 0 + contextContact.Total_Open_Cases__c;
+                iCon.Total_Closed_Cases__c = (iCon.Total_Closed_Cases__c != null) ? iCon.Total_Closed_Cases__c + contextContact.Total_Closed_Cases__c : 0 + contextContact.Total_Closed_Cases__c;
                 uow.registerDirty(iCon);
             }
         }

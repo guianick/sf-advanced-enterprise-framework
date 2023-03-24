@@ -108,8 +108,8 @@ public inherited sharing class aef_AccountCasesRollupModule extends aef_Applicat
                                                 .selectById(accountsToUpdate.keySet());
             for(Account iAcc : existingAccounts) {
                 Account contextAccount = accountsToUpdate.get(iAcc.Id);
-                iAcc.Total_Open_Cases__c += contextAccount.Total_Open_Cases__c;
-                iAcc.Total_Closed_Cases__c += contextAccount.Total_Closed_Cases__c;
+                iAcc.Total_Open_Cases__c = (iAcc.Total_Open_Cases__c != null) ? iAcc.Total_Open_Cases__c + contextAccount.Total_Open_Cases__c : 0 + contextAccount.Total_Open_Cases__c;
+                iAcc.Total_Closed_Cases__c = (iAcc.Total_Closed_Cases__c != null) ? iAcc.Total_Closed_Cases__c + contextAccount.Total_Closed_Cases__c : 0 + contextAccount.Total_Closed_Cases__c;
                 uow.registerDirty(iAcc);
             }
         }
